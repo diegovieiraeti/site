@@ -50,7 +50,6 @@ e um arquivo .devcontainer\devcontainer.json contendo:
   }
 ```
 
-
 no Terminal:
 ```
 make
