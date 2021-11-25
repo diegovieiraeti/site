@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Docker - Urubu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <!-- Bootstrap -->
+    <link href="//netdna.bootstrapcdn.com/bootswatch/3.3.6/darkly/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    <link href="/css/site.css" rel="stylesheet" media="screen">
+    <link href="/css/syntax.css" rel="stylesheet" media="screen">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+ 
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">diegovieiraeti</a>
+        </div>
+        <div class="navbar-collapse collapse">
+
+          <ul class="nav navbar-nav navbar-left">
+            <li><a href="/start.html">Start</a></li>
+            <li class="active"><a href="/notas/">Notas</a></li>
+            <li><a href="/content.html">Add content</a></li>
+            <li><a href="/customize.html">Customize</a></li>
+            <li><a href="/deploy.html">Deploy</a></li>
+          </ul>
+
+          <form class="navbar-form navbar-left" action="/search.html" role="search">
+            <div class="form-group">
+              <input type="text" required name="q" id="tipue_search_input" class="form-control" placeholder="Search"> 
+            </div>
+          </form>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="/more/" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/advanced.html">Advanced features</a></li>
+                <li><a href="/blog/">Blog demo</a></li>
+                <li><a href="/manual/">Manual demo</a></li>
+              </ul>
+            </li>
+          </ul>
+
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+
+<div class="container">
+
+  <ol class="breadcrumb">
+    <li><a href="/">Home</a></li>
+      <li><a href="/notas/">Notas</a></li>
+      <li class="active">Docker - Urubu</li>
+  </ol>
+
+  <div class="page-header">
+    <h1>Docker - Urubu</h1>
+  </div>
+
+  <div class="row">
+
+    <div class="col-md-7 content" role="main">
+    <main>
+      <p>Arquivo Dockerfile, contendo:</p>
+<div class="codehilite"><pre><span></span><span class="k">FROM</span> <span class="s">ubuntu:20.04</span>
+
+<span class="k">ENV</span> DEBIAN_FRONTEND noninteractive
+
+<span class="k">RUN</span> apt-get update <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> apt-get --yes install --reinstall ca-certificates <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> apt-get --yes install --no-install-recommends <span class="se">\</span>
+        build-essential <span class="se">\ </span>cd
+        curl <span class="se">\</span>
+        git <span class="se">\</span>
+        python <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> apt-get --purge autoremove <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> apt-get autoclean <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> rm -rf /var/lib/apt/lists/*
+
+<span class="k">RUN</span> curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+<span class="k">RUN</span>  python2 get-pip.py
+
+<span class="k">RUN</span> useradd -ms /bin/bash developer
+<span class="k">USER</span><span class="s"> developer</span>
+<span class="k">WORKDIR</span><span class="s"> /home/developer/workdir</span>
+
+<span class="k">RUN</span> pip install urubu
+<span class="k">RUN</span> pip install <span class="s1">&#39;Markdown&lt;3.0&#39;</span>
+</pre></div>
+
+
+<p>e um arquivo .devcontainer\devcontainer.json contendo:</p>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;urubu&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;context&quot;</span><span class="p">:</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dockerFile&quot;</span><span class="p">:</span> <span class="s2">&quot;../Dockerfile&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;remoteUser&quot;</span><span class="p">:</span> <span class="s2">&quot;developer&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;runArgs&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;--privileged&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--net&quot;</span><span class="p">,</span> <span class="s2">&quot;host&quot;</span><span class="p">,</span> 
+    <span class="p">],</span>
+    <span class="nt">&quot;workspaceMount&quot;</span><span class="p">:</span> <span class="s2">&quot;source=${localWorkspaceFolder}/workdir,target=/home/developer/workdir,type=bind,consistency=delegated&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;workspaceFolder&quot;</span><span class="p">:</span> <span class="s2">&quot;/home/developer/workdir&quot;</span>
+  <span class="p">}</span>
+</pre></div>
+    </main>
+    </div>
+
+
+  </div>
+
+    <div class="footer">
+        <p>Website powered by <a href="http://urubu.jandecaluwe.com">Urubu</a></p>
+    </div>
+
+
+</div>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- <script src="https://code.jquery.com/jquery.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+ 
+
+  </body>
+</html>
