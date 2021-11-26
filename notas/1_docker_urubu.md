@@ -50,14 +50,15 @@ e um arquivo .devcontainer\devcontainer.json contendo:
   }
 ```
 
-no Terminal:
-```
+Para criar um novo build do site, no Terminal:
+
+```Shell
 make
 ```
 
-em um segundo terminal, para rodar um servidor:
-```
+em um segundo terminal, para rodar um servidor e visualizar as atualizações:
+```Shell
 make serve
 ```
 
-Para atualizar a página é necessário reexecutar o comando **make** no primeiro terminal.
+É necessário recriar o *build* novamente, reexecutado o comando **make**.
