@@ -3,13 +3,13 @@ title: Página pessoal
 layout: page 
 #layout: home 
 content:
-    - start
+#    - start
     - notas
-    - content
-    - customize
-    - deploy
+#    - content
+#    - customize
+#    - deploy
     - tag
-    - more
+#    - more
 # tagline:
 #    Página pessoal
 ---
