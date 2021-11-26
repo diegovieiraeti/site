@@ -1,6 +1,7 @@
 ---
 title: Docker - Urubu
 layout: simple_page 
+tags: [docker, vscode]
 date: 2021-11-25
 ---
 

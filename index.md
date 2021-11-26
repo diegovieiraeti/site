@@ -8,7 +8,8 @@ content:
     - content
     - customize
     - deploy
-    - more 
+    - tag
+    - more
 # tagline:
 #    Página pessoal
 ---

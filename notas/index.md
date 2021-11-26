@@ -1,6 +1,6 @@
 ---
 title: Notas 
-layout: index
+layout: notas
 order: date
 reverse: true
 ---

@@ -1,6 +1,6 @@
 brand: diegovieiraeti
 
-bootswatch: darkly # cyborg # null # flatly, yeti, lumen,...
+bootswatch: simplex # darkly # cyborg # null # flatly, yeti, lumen,...
 navbar_inverse: false
 bootstrap: 3.3.6
 navbar_right_items: 1
