@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Criando imagem customizada do Windows</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <!-- Bootstrap -->
+    <link href="//netdna.bootstrapcdn.com/bootswatch/3.3.6/simplex/bootstrap.min.css" rel="stylesheet" media="screen">
+
+    <link href="/css/site.css" rel="stylesheet" media="screen">
+    <link href="/css/syntax.css" rel="stylesheet" media="screen">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+ 
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">diegovieiraeti</a>
+        </div>
+        <div class="navbar-collapse collapse">
+
+          <ul class="nav navbar-nav navbar-left">
+            <li class="active"><a href="/notas/">Notas</a></li>
+          </ul>
+
+          <form class="navbar-form navbar-left" action="/search.html" role="search">
+            <div class="form-group">
+              <input type="text" required name="q" id="tipue_search_input" class="form-control" placeholder="Search"> 
+            </div>
+          </form>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="/tag/" class="dropdown-toggle" data-toggle="dropdown">Tags <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="/tag/docker/">docker</a></li>
+                <li><a href="/tag/vscode/">vscode</a></li>
+              </ul>
+            </li>
+          </ul>
+
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+
+
+<div class="container">
+
+  <ol class="breadcrumb">
+    <li><a href="/">Home</a></li>
+      <li><a href="/notas/">Notas</a></li>
+      <li class="active">Criando imagem customizada do Windows</li>
+  </ol>
+
+  <div class="page-header">
+    <h1>Criando imagem customizada do Windows</h1>
+  </div>
+
+  <div class="row">
+
+    <div class="col-md-7 content" role="main">
+    <main>
+      <p>A criação da imagem customizada é realizada utilizando uma instalação do Windows feita no Virtualbox e posteriormente gerada utilizando o comando DISM.</p>
+<ol>
+<li>Crie no Virtualbox um <em>disco rígido virtual</em> do tipo <strong>VHD *(virtual Hard Disk)</strong>*.</li>
+</ol>
+<h3 id="no-virtualbox">No Virtualbox</h3>
+<ol>
+<li>
+<p>Após a instalação do Windows, antes do <strong>OOBE *Out-of-box experience</strong><em> (Configuração antes do primeiro acesso ao sistema operacional), pressione </em>CTRL+SHIFT+F3<em> para entrar no modo de auditoria </em>Sysprep Audit Mode* e efetue a instalação dos softwares.</p>
+</li>
+<li>
+<p>Ao finalizar a instalação dos Softwares e limpe os arquivos temporários, execute o <strong>Syprep</strong>, disponível em: <em>C:\Windows\System32\Sysprep</em>, com as opções:</p>
+<ul>
+<li>Entrar na Configuração Inicial pelo Usuário do Sistema (OOBE);</li>
+<li>Marcar: Generalizar;</li>
+<li>Desligar.</li>
+</ul>
+</li>
+</ol>
+<h3 id="no-computador-hospedeiro">No computador hospedeiro</h3>
+<ol>
+<li>
+<p>Use a pesquisa do Windows e procurar por <em>Criar e formatar partições do disco rígido</em> ou utilizar o <em>menu de usuário avançado do Windows</em> (<strong>Win+X</strong>) e clique em <em>Gerenciamento de disco</em>.</p>
+</li>
+<li>
+<p>No menu superior, selecione <em>Ação</em> &gt;&gt; <em>Anexar VHD</em>.</p>
+</li>
+<li>
+<p>Localize o <em>disco rígido virtual</em> utilizado no virtualbox e anexa-a, após localize a unidade que contém a instalação do Windows (vamos considerar unidade <strong>E:</strong> como exemplo).</p>
+</li>
+<li>
+<p>Execute no <em>Terminal do Windows (Administrador)</em>, os seguintes comandos:</p>
+</li>
+</ol>
+<div class="codehilite"><pre><span></span><span class="c1"># Mude para a unidade VHD que contém a instalação do Windows:</span>
+E:
+<span class="c1"># otimize a imagem</span>
+dism /image:E:<span class="se">\ </span>/optimize-image /boot
+<span class="c1"># Mude para o local destino</span>
+C:
+<span class="c1"># Capture a imagem </span>
+dism /capture-image /imagefile:WindowsCustom.wim /capturedir:E:<span class="se">\ </span>/name:<span class="s2">&quot;WindowsCustom&quot;</span> /compress:max
+</pre></div>
+
+
+<ol>
+<li>
+<p>Extraia um arquivo <em>ISO</em> de instalação do Windows e remova o arquivo <em>install.wim</em> ou <em>install.esd</em> da pasta <strong>\sources</strong>.</p>
+</li>
+<li>
+<p>Copie o arquivo <em>WindowsCustom.wim</em> para a pastas com os arquivos da ISO <strong>\sources</strong> e renomeie para <em>install.wim</em>.</p>
+</li>
+<li>
+<p>Execute o <strong>Dism++</strong> e abra a opção <em>Criar ISO</em> em <em>Utilitários &gt;&gt; Ferramentas</em>.</p>
+<ul>
+<li>Download em <a href="https://github.com/Chuyu-Team/Dism-Multi-language/releases">https://github.com/Chuyu-Team/Dism-Multi-language/releases</a></li>
+</ul>
+</li>
+<li>
+<p>Copie o arquivo <em>ISO</em> para o pendrive preparado com o <strong>Ventoy</strong>.</p>
+<ul>
+<li>Download em <a href="https://www.ventoy.net/en/doc_start.html">https://www.ventoy.net/en/doc_start.html</a></li>
+</ul>
+</li>
+</ol>
+    </main>
+    </div>
+
+
+  </div>
+
+    <div class="footer">
+        <p>Website powered by <a href="http://urubu.jandecaluwe.com">Urubu</a></p>
+    </div>
+
+
+</div>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- <script src="https://code.jquery.com/jquery.js"></script> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+ 
+
+  </body>
+</html>
