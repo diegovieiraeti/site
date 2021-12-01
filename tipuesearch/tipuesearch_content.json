@@ -103,14 +103,20 @@
             "url": "/notas/1_docker_urubu.html"
         }, 
         {
-            "tags": "", 
-            "text": "Configuração do Docker para Flutter...", 
+            "tags": "docker vscode", 
+            "text": "Arquivo Dockerfile, contendo: FROM ubuntu:20.04 ENV DEBIAN_FRONTEND noninteractive RUN apt-get update \\ && apt-get --yes install --reinstall ca-certificates \\ && apt-get --yes install --no-install-recommends \\ xdg-user-dirs xdg-utils \\ clang \\ cmake \\ curl \\ file \\ git \\ libblkid-dev \\ libglu1-mesa \\ libgtk-3-dev \\ liblzma-dev \\ libxinerama1 \\ libxcursor1 \\ libxrandr2 \\ pkg-config \\ ninja-build \\ unzip \\ xz-utils \\ && apt-get --purge autoremove \\ && apt-get autoclean \\ && rm -rf /var/lib/apt/lists/* RUN useradd -ms /bin/bash developer USER developer WORKDIR /home/developer RUN git clone https://github.com/flutter/flutter.git -b stable /home/developer/flutter/ ENV PATH \" $PATH :/home/developer/flutter/bin\" RUN flutter upgrade \\ && flutter config --enable-linux-desktop \\ && flutter precache --linux --no-web --no-android --no-ios \\ && flutter doctor -v e um arquivo .devcontainer\\devcontainer.json contendo: { \"name\" : \"flutter\" , \"context\" : \"..\" , \"dockerFile\" : \"../Dockerfile\" , \"remoteUser\" : \"developer\" , \"runArgs\" : [ \"--privileged\" , \"--net\" , \"host\" , //linux // \"-e\" , \"DISPLAY=${env:DISPLAY}\" , // windows // \"-e\" , \"DISPLAY=IP_WINDOWS:0\" , \"-e\" , \"LIBGL_ALWAYS_INDIRECT=0\" , \"-v\" , \"/tmp/.X11-unix:/tmp/.X11-unix\" , // \"-e\" , \" xhost local:root\" , ], \"extensions\" : [ \"dart-code.flutter\" ], \"workspaceMount\" : \"source=${localWorkspaceFolder}/workspace,target=/home/developer/workspace,type=bind,consistency=delegated\" , \"workspaceFolder\" : \"/home/developer/workspace\" } É necessário considerar o sistema operacional nativo, (não) comentando a váriavel DISPLAY de acordo. Caso o sistema operacional hospedeiro seja o Windows: É necessário substituir IP_WINDOWS pelo endereço de rede local do Windows. Instalar o aplicativo Xming X Server for Windows https://sourceforge.net/projects/xming/ Executar o aplicativo Xlaunch com as seguintes configurações selecionadas e permitir a aplicação no Firewall do windows: Display settings: Multiple windows , Display number: -1 . Client startup: Start no client . Extra settings: Clipboard , Primary Selection , Disable access control", 
             "title": "Docker Flutter Linux", 
             "url": "/notas/2_docker_flutter_linux.html"
         }, 
         {
+            "tags": "docker vscode", 
+            "text": "A criação da imagem customizada é realizada utilizando uma instalação do Windows feita no Virtualbox e posteriormente gerada utilizando o comando DISM. Crie no Virtualbox um disco rígido virtual do tipo VHD *(virtual Hard Disk) *. No Virtualbox Após a instalação do Windows, antes do OOBE *Out-of-box experience (Configuração antes do primeiro acesso ao sistema operacional), pressione CTRL+SHIFT+F3 para entrar no modo de auditoria Sysprep Audit Mode* e efetue a instalação dos softwares. Ao finalizar a instalação dos Softwares e limpe os arquivos temporários, execute o Syprep , disponível em: C:\\Windows\\System32\\Sysprep , com as opções: Entrar na Configuração Inicial pelo Usuário do Sistema (OOBE); Marcar: Generalizar; Desligar. No computador hospedeiro Use a pesquisa do Windows e procurar por Criar e formatar partições do disco rígido ou utilizar o menu de usuário avançado do Windows ( Win+X ) e clique em Gerenciamento de disco . No menu superior, selecione Ação >> Anexar VHD . Localize o disco rígido virtual utilizado no virtualbox e anexa-a, após localize a unidade que contém a instalação do Windows (vamos considerar unidade E: como exemplo). Execute no Terminal do Windows (Administrador) , os seguintes comandos: # Mude para a unidade VHD que contém a instalação do Windows: E: # otimize a imagem dism /image:E: \\ /optimize-image /boot # Mude para o local destino C: # Capture a imagem dism /capture-image /imagefile:WindowsCustom.wim /capturedir:E: \\ /name: \"WindowsCustom\" /compress:max Extraia um arquivo ISO de instalação do Windows e remova o arquivo install.wim ou install.esd da pasta \\sources . Copie o arquivo WindowsCustom.wim para a pastas com os arquivos da ISO \\sources e renomeie para install.wim . Execute o Dism++ e abra a opção Criar ISO em Utilitários >> Ferramentas . Download em https://github.com/Chuyu-Team/Dism-Multi-language/releases Copie o arquivo ISO para o pendrive preparado com o Ventoy . Download em https://www.ventoy.net/en/doc_start.html", 
+            "title": "Criando imagem customizada do Windows", 
+            "url": "/notas/3_windows_custom_image.html"
+        }, 
+        {
             "tags": "", 
-            "text": "Docker Flutter Linux 26-Nov-2021 Docker - Urubu 25-Nov-2021 docker vscode", 
+            "text": "Criando imagem customizada do Windows 30-Nov-2021 docker vscode Docker Flutter Linux 29-Nov-2021 docker vscode Docker - Urubu 25-Nov-2021 docker vscode", 
             "title": "Notas", 
             "url": "/notas/index.html"
         }, 
@@ -122,13 +128,13 @@
         }, 
         {
             "tags": "", 
-            "text": "Docker - Urubu 25-Nov-2021", 
+            "text": "Criando imagem customizada do Windows 30-Nov-2021 Docker Flutter Linux 29-Nov-2021 Docker - Urubu 25-Nov-2021", 
             "title": "docker", 
             "url": "/tag/docker/"
         }, 
         {
             "tags": "", 
-            "text": "Docker - Urubu 25-Nov-2021", 
+            "text": "Criando imagem customizada do Windows 30-Nov-2021 Docker Flutter Linux 29-Nov-2021 Docker - Urubu 25-Nov-2021", 
             "title": "vscode", 
             "url": "/tag/vscode/"
         }

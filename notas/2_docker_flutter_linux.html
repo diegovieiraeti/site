@@ -75,7 +75,84 @@
 
     <div class="col-md-7 content" role="main">
     <main>
-      <p>Configuração do Docker para Flutter...</p>
+      <p>Arquivo Dockerfile, contendo:</p>
+<div class="codehilite"><pre><span></span><span class="k">FROM</span> <span class="s">ubuntu:20.04</span>
+<span class="k">ENV</span> DEBIAN_FRONTEND noninteractive
+
+<span class="k">RUN</span> apt-get update <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> apt-get --yes install --reinstall ca-certificates <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> apt-get --yes install --no-install-recommends <span class="se">\</span>
+        xdg-user-dirs xdg-utils <span class="se">\</span>
+        clang <span class="se">\</span>
+        cmake <span class="se">\</span>
+        curl <span class="se">\</span>
+        file <span class="se">\</span>
+        git <span class="se">\</span>
+        libblkid-dev <span class="se">\</span>
+        libglu1-mesa <span class="se">\</span>
+        libgtk-3-dev <span class="se">\</span>
+        liblzma-dev <span class="se">\</span>
+        libxinerama1 <span class="se">\</span>
+        libxcursor1 <span class="se">\</span>
+        libxrandr2 <span class="se">\</span>
+        pkg-config <span class="se">\</span>
+        ninja-build <span class="se">\</span>
+        unzip <span class="se">\</span>
+        xz-utils <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> apt-get --purge autoremove <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> apt-get autoclean <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> rm -rf /var/lib/apt/lists/*
+
+<span class="k">RUN</span> useradd -ms /bin/bash developer
+<span class="k">USER</span><span class="s"> developer</span>
+<span class="k">WORKDIR</span><span class="s"> /home/developer</span>
+
+<span class="k">RUN</span> git clone https://github.com/flutter/flutter.git -b stable /home/developer/flutter/
+<span class="k">ENV</span> PATH <span class="s2">&quot;</span><span class="nv">$PATH</span><span class="s2">:/home/developer/flutter/bin&quot;</span>
+
+<span class="k">RUN</span> flutter upgrade <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> flutter config --enable-linux-desktop <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> flutter precache --linux --no-web --no-android --no-ios <span class="se">\</span>
+    <span class="o">&amp;&amp;</span> flutter doctor -v
+</pre></div>
+
+
+<p>e um arquivo .devcontainer\devcontainer.json contendo:</p>
+<div class="codehilite"><pre><span></span><span class="p">{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;flutter&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;context&quot;</span><span class="p">:</span> <span class="s2">&quot;..&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;dockerFile&quot;</span><span class="p">:</span> <span class="s2">&quot;../Dockerfile&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;remoteUser&quot;</span><span class="p">:</span> <span class="s2">&quot;developer&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;runArgs&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="s2">&quot;--privileged&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--net&quot;</span><span class="p">,</span> <span class="s2">&quot;host&quot;</span><span class="p">,</span> 
+    <span class="err">//linux</span>
+    <span class="err">//</span>  <span class="s2">&quot;-e&quot;</span><span class="p">,</span> <span class="s2">&quot;DISPLAY=${env:DISPLAY}&quot;</span><span class="p">,</span>
+    <span class="err">//</span> <span class="err">windows</span>
+    <span class="err">//</span>  <span class="s2">&quot;-e&quot;</span><span class="p">,</span> <span class="s2">&quot;DISPLAY=IP_WINDOWS:0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-e&quot;</span><span class="p">,</span> <span class="s2">&quot;LIBGL_ALWAYS_INDIRECT=0&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;/tmp/.X11-unix:/tmp/.X11-unix&quot;</span><span class="p">,</span>
+      <span class="err">//</span>  <span class="s2">&quot;-e&quot;</span><span class="p">,</span> <span class="s2">&quot; xhost local:root&quot;</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="nt">&quot;extensions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;dart-code.flutter&quot;</span><span class="p">],</span>
+    <span class="nt">&quot;workspaceMount&quot;</span><span class="p">:</span> <span class="s2">&quot;source=${localWorkspaceFolder}/workspace,target=/home/developer/workspace,type=bind,consistency=delegated&quot;</span><span class="p">,</span>
+    <span class="nt">&quot;workspaceFolder&quot;</span><span class="p">:</span> <span class="s2">&quot;/home/developer/workspace&quot;</span>
+  <span class="p">}</span>
+</pre></div>
+
+
+<p>É necessário considerar o sistema operacional nativo, (não) comentando a váriavel <strong>DISPLAY</strong> de acordo.</p>
+<p>Caso o sistema operacional hospedeiro seja o Windows:</p>
+<ol>
+<li>É necessário substituir <em>IP_WINDOWS</em> pelo endereço de rede local do Windows.</li>
+<li>Instalar o aplicativo <strong>Xming X Server for Windows</strong> <a href="https://sourceforge.net/projects/xming/">https://sourceforge.net/projects/xming/</a></li>
+<li>Executar o aplicativo <strong>Xlaunch</strong> com as seguintes configurações selecionadas e permitir a aplicação no Firewall do windows:<ul>
+<li>Display settings: <em>Multiple windows</em>, Display number: <em>-1</em>.</li>
+<li>Client startup: <em>Start no client</em>.</li>
+<li>Extra settings: <em>Clipboard</em>, <em>Primary Selection</em>, <em>Disable access control</em></li>
+</ul>
+</li>
+</ol>
     </main>
     </div>
 
